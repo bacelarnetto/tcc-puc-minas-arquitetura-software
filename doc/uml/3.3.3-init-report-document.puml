@@ -1,0 +1,40 @@
+@startuml
+' Corresponde à seção 3.3.3 do relatório (Init Worker, Report Builder, Document Generator —
+' Coleta e Consolidação, steps 1/3/4). Renderizar com render.sh.
+' IObjectStorage também aparece em 3.3.2-mcp-host-tools-api.puml (mesmo Object Storage,
+' consumido por Tools API/Report Builder/Document Generator) — mantida duplicada de propósito,
+' cada sub-diagrama fica autocontido; ao editar o contrato, replicar a mudança nos dois arquivos.
+
+interface IPipelineRequestRepository {
+  +salvarSolicitacao(sinistroId, origem, timestamp)
+}
+interface IObjectStorage {
+  +gravar(chave, dados)
+  +ler(chave)
+}
+interface IDocumentPublisher {
+  +publicar(sinistroId, metadado)
+  +existeDocumento(sinistroId)
+}
+
+package "Init Worker" {
+  class InitActivityWorker <<Component>>
+  class InitRequestRepository <<Component>>
+}
+
+package "Report Builder" {
+  class ReportConsolidator <<Component>>
+}
+
+package "Document Generator" {
+  class DocumentGenerator <<Component>>
+  class GoogleDriveAdapter <<Component>>
+}
+
+InitActivityWorker ..> IPipelineRequestRepository : usa
+InitRequestRepository ..|> IPipelineRequestRepository
+ReportConsolidator ..> IObjectStorage : usa
+DocumentGenerator ..> IObjectStorage : usa
+DocumentGenerator ..> IDocumentPublisher : usa
+GoogleDriveAdapter ..|> IDocumentPublisher
+@enduml

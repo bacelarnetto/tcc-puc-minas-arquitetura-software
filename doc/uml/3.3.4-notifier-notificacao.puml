@@ -1,0 +1,23 @@
+@startuml
+' Corresponde à seção 3.3.4 do relatório (Notifier e API de Notificação — Notificação, step 5).
+' Editar aqui: componentes/interfaces desse grupo. Renderizar com render.sh.
+
+interface INotificationPublisher {
+  +publicar(sinistroId, status, payload)
+}
+interface INotificationChannel {
+  +enviar(sinistroId, destinatario, mensagem)
+}
+
+class Notifier <<Component>>
+class PubSubPublisherAdapter <<Component>>
+class NotificationDispatcher <<Component>>
+class EmailChannelAdapter <<Component>>
+class PushChannelAdapter <<Component>>
+
+Notifier ..> INotificationPublisher : usa
+PubSubPublisherAdapter ..|> INotificationPublisher
+NotificationDispatcher ..> INotificationChannel : usa
+EmailChannelAdapter ..|> INotificationChannel
+PushChannelAdapter ..|> INotificationChannel
+@enduml

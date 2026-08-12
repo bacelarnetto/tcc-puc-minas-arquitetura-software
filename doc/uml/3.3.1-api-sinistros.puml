@@ -1,0 +1,25 @@
+@startuml
+' Corresponde à seção 3.3.1 do relatório (API de Sinistros — Entrada).
+' Editar aqui: componentes/interfaces desse grupo. Renderizar com render.sh.
+
+interface IReadModel {
+  +salvar(sinistroId, dados)
+  +consultar(sinistroId)
+}
+interface IWorkflowStarter {
+  +iniciar(workflowId, payload)
+}
+
+class CommandHandler <<Component>>
+class QueryHandler <<Component>>
+class NotificationConsumer <<Component>>
+class ReadModelRepository <<Component>>
+class TemporalWorkflowClient <<Component>>
+
+CommandHandler ..> IReadModel : usa
+CommandHandler ..> IWorkflowStarter : usa
+QueryHandler ..> IReadModel : usa
+NotificationConsumer ..> IReadModel : usa
+ReadModelRepository ..|> IReadModel
+TemporalWorkflowClient ..|> IWorkflowStarter
+@enduml

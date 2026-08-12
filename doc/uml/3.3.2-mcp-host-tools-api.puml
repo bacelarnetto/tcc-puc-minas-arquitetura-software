@@ -1,0 +1,69 @@
+@startuml
+' Corresponde à seção 3.3.2 do relatório (MCP Host e Tools API — Agentes e Tools).
+' Editar aqui: componentes/interfaces desse grupo. Renderizar com render.sh.
+
+interface IMCPTool {
+  +tools_list()
+  +tools_call(name, args)
+}
+interface IApoliceSinistroQuery {
+  +consultarApolice(id)
+  +consultarSinistro(id)
+}
+interface IDocumentCollection {
+  +coletarFotos(sinistroId)
+  +coletarLaudos(sinistroId)
+}
+interface IObjectStorage {
+  +gravar(chave, dados)
+  +ler(chave)
+}
+interface ILLMClient {
+  +chat(mensagens, ferramentas)
+}
+interface IPromptConfigRepository {
+  +buscarConfig(agenteId)
+  +salvarConfig(agenteId, config)
+}
+interface ICache {
+  +buscar(chave)
+  +salvar(chave, valor, ttl)
+}
+
+package "MCP Host" {
+  class AgentOrchestrator <<Component>>
+  class LLMProviderAdapter <<Component>>
+  class PromptConfigStore <<Component>>
+  class MCPClientManager <<Component>>
+}
+
+' Tools API — sem package: o layout automático sobrepunha o ToolRegistry na borda
+' da caixa com muitas interfaces cruzando fronteira (testado com layout padrão,
+' motor Smetana e reordenação de declaração — mesmo resultado nas 3 tentativas).
+class MCPServerEndpoint <<Component>>
+class ToolRegistry <<Component>>
+class ApoliceSinistroQueryService <<Component>>
+class DocumentCollector <<Component>>
+class CacheAdapter <<Component>>
+class StorageWriter <<Component>>
+
+' hint de ordem horizontal pro layout automático não cruzar as 4 linhas abaixo
+ILLMClient -[hidden]right- IPromptConfigRepository
+
+AgentOrchestrator ..> ILLMClient : usa
+LLMProviderAdapter ..|> ILLMClient
+AgentOrchestrator ..> IPromptConfigRepository : usa
+PromptConfigStore ..|> IPromptConfigRepository
+AgentOrchestrator --> MCPClientManager
+MCPClientManager ..> IMCPTool : consome
+MCPServerEndpoint ..|> IMCPTool
+MCPServerEndpoint --> ToolRegistry
+ToolRegistry ..> IApoliceSinistroQuery : usa
+ToolRegistry ..> IDocumentCollection : usa
+ApoliceSinistroQueryService ..|> IApoliceSinistroQuery
+DocumentCollector ..|> IDocumentCollection
+ApoliceSinistroQueryService ..> ICache : usa
+CacheAdapter ..|> ICache
+DocumentCollector ..> IObjectStorage : usa
+StorageWriter ..|> IObjectStorage
+@enduml
