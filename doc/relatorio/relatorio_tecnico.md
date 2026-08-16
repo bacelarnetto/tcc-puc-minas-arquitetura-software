@@ -12,7 +12,7 @@
 > Este documento segue as **duas etapas** vigentes (não a versão de 3 etapas dos arquivos do Notion, que
 > parece ser de uma oferta anterior do curso — a confirmar com o professor).
 
-> **Repositório do projeto:** o código-fonte, os modelos C4 (Structurizr) e os diagramas de componentes (PlantUML) usados neste relatório estão versionados em [github.com/bacelarnetto/tcc-engenharia-software](https://github.com/bacelarnetto/tcc-engenharia-software) — incluindo os artefatos editáveis (`doc/c4/`, `doc/uml/`) e o próprio relatório publicado via [docsify](https://docsify.js.org/) (`doc/relatorio/`).
+> **Repositório do projeto:** o código-fonte, os modelos C4 (Structurizr) e os diagramas de componentes (PlantUML) usados neste relatório estão versionados em [github.com/bacelarnetto/tcc-puc-minas-arquitetura-software](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software) — incluindo os artefatos editáveis (`doc/c4/`, `doc/uml/`) e o próprio relatório publicado via [docsify](https://docsify.js.org/) (`doc/relatorio/`).
 
 ---
 
@@ -164,7 +164,7 @@ Os mecanismos arquiteturais representam as decisões de design e escolhas tecnol
 
 *Legenda de formas/cores da Figura 1.*
 
-**Figura 1 – Diagrama de Contexto.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/c4), fonte editável, ver [view-contexto.dsl](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/c4/view-contexto.dsl)).
+**Figura 1 – Diagrama de Contexto.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/c4), fonte editável, ver [view-contexto.dsl](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/c4/view-contexto.dsl)). Imagem em alta resolução: [3.1-contexto.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.1-contexto.png).
 
 A Figura 1 mostra a especificação do diagrama geral (macroarquitetura) da solução proposta, com todos os atores e sistemas externos que interagem com a Plataforma RelatoSeg. A segurada pode enviar fotos e informações do dano diretamente pelo aplicativo mobile ou pelo web portal (aplicações separadas do Web Console interno — ver justificativa na seção 2.4), disparando a análise (entrada *self-service*). Alternativamente, o regulador de sinistros solicita a análise através do sistema de Workflow/BPM já existente na seguradora, que dispara a Plataforma RelatoSeg — comunicação bidirecional, já que a Plataforma também atualiza o Workflow/BPM com o status da análise. Regulador e corretor de seguros usam o Web Console para acompanhar o status das análises; o administrador de plataforma — funcionário técnico/de negócio da seguradora — usa uma aplicação separada, o **Agent Console** (ver justificativa na seção 2.4), para criar/configurar agentes, modelos de LLM e prompts, e cadastrar novos MCP Servers. Em todos os casos, a plataforma orquestra os agentes de IA — invocando o **provedor de LLM** contratado para cada chamada de chat completion —, consulta as fontes de dados da apólice e do sinistro (estruturadas no *data warehouse*, documentais como laudos periciais nos sistemas internos), gera o parecer final e notifica ativamente ao término do processo (sucesso ou erro): por e-mail para regulador e corretor, por push notification para a segurada — além de o resultado ficar sempre disponível sob consulta nos respectivos consoles.
 
@@ -183,7 +183,7 @@ Antes de detalhar cada *view*, a Figura 2 mostra a **visão macro** — todos os
 
 *Legenda de formas/cores da Figura 2.*
 
-**Figura 2 – Diagrama de Container, visão macro.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/c4), fonte editável, ver [view-container-macro.dsl](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/c4/view-container-macro.dsl)).
+**Figura 2 – Diagrama de Container, visão macro.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/c4), fonte editável, ver [view-container-macro.dsl](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/c4/view-container-macro.dsl)). Imagem em alta resolução: [3.2-container-macro.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.2-container-macro.png).
 
 #### 3.2.1 Entrada, Autenticação e Roteamento
 
@@ -195,7 +195,7 @@ Esta subseção detalha as portas de entrada de negócio da plataforma — o flu
 
 *Legenda de formas/cores da Figura 3.*
 
-**Figura 3 – Diagrama de Container 3.2.1, Entrada, Autenticação e Roteamento.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/c4), fonte editável, ver [view-container-entrada.dsl](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/c4/view-container-entrada.dsl)).
+**Figura 3 – Diagrama de Container 3.2.1, Entrada, Autenticação e Roteamento.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/c4), fonte editável, ver [view-container-entrada.dsl](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/c4/view-container-entrada.dsl)). Imagem em alta resolução: [3.2.1-container-entrada.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.2.1-container-entrada.png).
 
 A Figura 3 apresenta os containers responsáveis pela entrada de negócio. Antes de qualquer chamada de negócio, os clientes (Mobile App, Web Portal, Web Console, Agent Console) se autenticam no **Keycloak** via OAuth2/OIDC — um *realm* interno, federado ao SSO corporativo já existente na seguradora (regulador, corretor, administrador), e um *realm* externo com cadastro próprio (segurada). O token resultante carrega o papel do usuário como *claim*, usado pelo **API Gateway** para aplicar RBAC na borda, sem que cada serviço downstream precise reimplementar essa checagem. O fluxo tem três portas de entrada de negócio para o mesmo pipeline: as duas portas **self-service** passam pelo **API Gateway** único (autenticação, rate limiting e roteamento), já que carregam o token de usuário validado ali — a segurada envia fotos e dados do dano via **Mobile App** (React Native, com captura *offline-first*) ou **Web Portal** (React). Já a integração do regulador de sinistros, feita pelo sistema de Workflow/BPM já existente na seguradora, é uma chamada **service-to-service (M2M)** direta à **API de Sinistros**, autenticada via OAuth2 *client credentials* no Keycloak — sem passar pelo Gateway, pois não carrega token de usuário para RBAC por papel, e sim credencial do próprio sistema externo. Todo o tráfego de negócio (disparo e consulta de status) converge para a **API de Sinistros** — que segrega comando de leitura (padrão **CQRS** — *Command Query Responsibility Segregation*): ela grava um registro inicial na sua **própria base de leitura (Base de Sinistros)**, dispara a execução no **Temporal Server** e devolve o status atual sempre consultando essa mesma base, isolada do estado interno da orquestração. O **Web Console** (React) é de uso exclusivo de regulador e corretor, que o utilizam para acompanhar o status/histórico das solicitações. O **Agent Console** (React) é uma aplicação separada, de uso técnico/interno, restrita ao administrador de plataforma (funcionário técnico/de negócio da seguradora — ver justificativa na seção 2.4): antes mesmo do login, o acesso já é filtrado na borda pelo **Identity-Aware Proxy (IAP)**, que só deixa alcançar a aplicação usuários autorizados (ver justificativa na seção 2.4) — camada extra que os demais front ends não têm, dado o *blast radius* dessa superfície. Autenticado, o administrador cria e configura agentes (prompt, modelo de LLM) e cadastra novos MCP Servers, através do mesmo Gateway único, roteado ao **MCP Host** — persistência detalhada em 3.2.2. A partir da chamada `API de Sinistros → Temporal Server`, a orquestração durável do pipeline assume o fluxo, detalhada na próxima *view*.
 
@@ -209,7 +209,7 @@ Esta subseção detalha os steps 1 a 4 do pipeline, responsáveis por registrar 
 
 *Legenda de formas/cores da Figura 4.*
 
-**Figura 4 – Diagrama de Container 3.2.2, Coleta e Consolidação de Dados (steps 1-4).** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/c4), fonte editável, ver [view-container-pipeline.dsl](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/c4/view-container-pipeline.dsl)).
+**Figura 4 – Diagrama de Container 3.2.2, Coleta e Consolidação de Dados (steps 1-4).** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/c4), fonte editável, ver [view-container-pipeline.dsl](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/c4/view-container-pipeline.dsl)). Imagem em alta resolução: [3.2.2-container-pipeline.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.2.2-container-pipeline.png).
 
 A Figura 4 detalha os steps 1 a 4 do pipeline. O Temporal orquestra de forma durável (com retries automáticos e deduplicação nativa por Workflow ID) uma sequência de 5 *activities*, mantendo a numeração original do pipeline: **step 1** (**Init Worker**) persiste a solicitação na **Base do Pipeline** (Cloud SQL for PostgreSQL), seguido por **step 2** (**MCP Host**), **step 3** (**Report Builder**) e **step 4** (**Document Generator**) — cada step com seu próprio container, dono exclusivo dos dados que grava. O MCP Host — implementado como **Spring MCP Client** — aciona os agentes de IA, chamando o **provedor de LLM** contratado (chat completion) e utilizando a **Tools API** — implementada como **Spring MCP Service (Server)** — para buscar as informações necessárias (dados do *data warehouse* e do sistema de apólices/sinistros, com cache de leitura no **Memorystore for Redis**), persistindo-as no storage intermediário; o MCP Host também persiste, numa instância própria de Cloud SQL isolada da base de execução do pipeline (Prompt Config Store — domínio de configuração de agentes/LLM, dado sensível como as chaves de API dos modelos, mesmo raciocínio já aplicado ao Keycloak), a configuração de agentes/modelos/prompts recebida do Agent Console (RF05). O **Report Builder** consolida esses dados brutos em um metadado padronizado, consumido pelo **Document Generator** para produzir o documento final. Concluído o step 4, o Temporal aciona o **step 5** (**Notifier**), detalhado na próxima *view*.
 
@@ -225,7 +225,7 @@ Esta subseção detalha o step 5 do pipeline, responsável por publicar o result
 
 *Legenda de formas/cores da Figura 5.*
 
-**Figura 5 – Diagrama de Container 3.2.3, Notificação (step 5) e Consumo do Resultado.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/c4), fonte editável, ver [view-container-notificacao.dsl](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/c4/view-container-notificacao.dsl)).
+**Figura 5 – Diagrama de Container 3.2.3, Notificação (step 5) e Consumo do Resultado.** Fonte: elaborado pelo autor (gerado a partir do modelo C4 em Structurizr — [doc/c4/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/c4), fonte editável, ver [view-container-notificacao.dsl](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/c4/view-container-notificacao.dsl)). Imagem em alta resolução: [3.2.3-container-notificacao.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.2.3-container-notificacao.png).
 
 A Figura 5 detalha o step 5 e os dois consumidores independentes do resultado. O **Notifier** publica o resultado (ou erro) num tópico do **Google Cloud Pub/Sub**, consumido por duas *subscriptions* independentes entre si: a **API de Sinistros** atualiza a **Base de Sinistros** com o status final e o link do documento; em paralelo, a **API de Notificação** — desacoplada e reutilizável por outros domínios de negócio que venham a integrar a plataforma (RF15) — dispara o aviso ativo: e-mail via **SendGrid** para regulador/corretor, push via **OneSignal** para a segurada. Nenhum dos dois consumidores depende do outro: se a API de Notificação estiver indisponível, a atualização da Base de Sinistros não é afetada, e vice-versa. Os clientes (Mobile App, Web Portal, Web Console) sempre podem consultar a Base de Sinistros sob demanda, nunca o estado interno da orquestração, mas não dependem só da consulta: a notificação ativa avisa proativamente quando o resultado sai.
 
@@ -242,7 +242,7 @@ O diagrama cobre os **8 containers de aplicação com lógica própria desenvolv
 
 ![Diagrama de Componentes 3.3.1 — API de Sinistros](diagramas/3.3.1-api-sinistros.png)
 
-**Figura 6 – Diagrama de Componentes 3.3.1, API de Sinistros.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [3.3.1-api-sinistros.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/3.3.1-api-sinistros.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 6 – Diagrama de Componentes 3.3.1, API de Sinistros.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [3.3.1-api-sinistros.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/3.3.1-api-sinistros.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [3.3.1-api-sinistros.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.3.1-api-sinistros.png).
 
 A Figura 6 apresenta os componentes da API de Sinistros.
 
@@ -250,7 +250,7 @@ A Figura 6 apresenta os componentes da API de Sinistros.
 
 ![Diagrama de Componentes 3.3.2 — MCP Host e Tools API](diagramas/3.3.2-mcp-host-tools-api.png)
 
-**Figura 7 – Diagrama de Componentes 3.3.2, MCP Host e Tools API.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [3.3.2-mcp-host-tools-api.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/3.3.2-mcp-host-tools-api.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 7 – Diagrama de Componentes 3.3.2, MCP Host e Tools API.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [3.3.2-mcp-host-tools-api.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/3.3.2-mcp-host-tools-api.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [3.3.2-mcp-host-tools-api.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.3.2-mcp-host-tools-api.png).
 
 A Figura 7 apresenta os componentes do MCP Host e da Tools API.
 
@@ -258,7 +258,7 @@ A Figura 7 apresenta os componentes do MCP Host e da Tools API.
 
 ![Diagrama de Componentes 3.3.3 — Init Worker, Report Builder e Document Generator](diagramas/3.3.3-init-report-document.png)
 
-**Figura 8 – Diagrama de Componentes 3.3.3, Init Worker, Report Builder e Document Generator.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [3.3.3-init-report-document.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/3.3.3-init-report-document.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 8 – Diagrama de Componentes 3.3.3, Init Worker, Report Builder e Document Generator.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [3.3.3-init-report-document.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/3.3.3-init-report-document.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [3.3.3-init-report-document.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.3.3-init-report-document.png).
 
 A Figura 8 apresenta os componentes dos steps 1, 3 e 4. `IObjectStorage` é a mesma porta realizada pelo **Storage Writer** na Figura 7 (Object Storage é um container só, compartilhado entre Tools API, Report Builder e Document Generator) — não repetida aqui por já pertencer ao grupo de componentes da Tools API.
 
@@ -266,7 +266,7 @@ A Figura 8 apresenta os componentes dos steps 1, 3 e 4. `IObjectStorage` é a me
 
 ![Diagrama de Componentes 3.3.4 — Notifier e API de Notificação](diagramas/3.3.4-notifier-notificacao.png)
 
-**Figura 9 – Diagrama de Componentes 3.3.4, Notifier e API de Notificação.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [3.3.4-notifier-notificacao.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/3.3.4-notifier-notificacao.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 9 – Diagrama de Componentes 3.3.4, Notifier e API de Notificação.** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [3.3.4-notifier-notificacao.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/3.3.4-notifier-notificacao.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [3.3.4-notifier-notificacao.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/3.3.4-notifier-notificacao.png).
 
 A Figura 9 apresenta os componentes do step 5.
 
@@ -385,7 +385,7 @@ Requisição sem token válido ou fora do RBAC é rejeitada (401/403) no API Gat
 
 ![Sequência de rejeição de acesso não autorizado (RNF01)](diagramas/4.3-rnf01-rejeicao-acesso.png)
 
-**Figura 10 – Sequência de rejeição de acesso não autorizado (RNF01).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf01-rejeicao-acesso.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf01-rejeicao-acesso.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 10 – Sequência de rejeição de acesso não autorizado (RNF01).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf01-rejeicao-acesso.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf01-rejeicao-acesso.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf01-rejeicao-acesso.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf01-rejeicao-acesso.png).
 
 ---
 
@@ -424,7 +424,7 @@ Esforço de implementação do novo MCP Server (*tools* + testes) dentro de 10 d
 
 ![Recorte de extensão via novo domínio MCP (RNF02)](diagramas/4.3-rnf02-extensao-dominio.png)
 
-**Figura 11 – Recorte de extensão via novo domínio MCP (RNF02).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf02-extensao-dominio.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf02-extensao-dominio.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 11 – Recorte de extensão via novo domínio MCP (RNF02).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf02-extensao-dominio.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf02-extensao-dominio.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf02-extensao-dominio.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf02-extensao-dominio.png).
 
 ---
 
@@ -463,7 +463,7 @@ Um nó ou zona do cluster falha durante o processamento de uma solicitação em 
 
 ![Recorte de topologia de disponibilidade multi-zona (RNF03)](diagramas/4.3-rnf03-disponibilidade-infra.png)
 
-**Figura 12 – Recorte de topologia de disponibilidade multi-zona (RNF03).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf03-disponibilidade-infra.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf03-disponibilidade-infra.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 12 – Recorte de topologia de disponibilidade multi-zona (RNF03).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf03-disponibilidade-infra.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf03-disponibilidade-infra.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf03-disponibilidade-infra.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf03-disponibilidade-infra.png).
 
 ---
 
@@ -502,7 +502,7 @@ Custo médio de token por sinistro dentro de orçamento definido, sem violar RNF
 
 ![Recorte de model tiering e cache de leitura (RNF04)](diagramas/4.3-rnf04-model-tiering-cache.png)
 
-**Figura 13 – Recorte de model tiering e cache de leitura (RNF04).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf04-model-tiering-cache.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf04-model-tiering-cache.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 13 – Recorte de model tiering e cache de leitura (RNF04).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf04-model-tiering-cache.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf04-model-tiering-cache.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf04-model-tiering-cache.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf04-model-tiering-cache.png).
 
 ---
 
@@ -541,7 +541,7 @@ Dado um `sinistro_id`, a cadeia completa (quem disparou, quais fontes/*tools* co
 
 ![Sequência de consulta de auditoria/rastreabilidade (RNF05)](diagramas/4.3-rnf05-rastreabilidade.png)
 
-**Figura 14 – Sequência de consulta de auditoria/rastreabilidade (RNF05).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf05-rastreabilidade.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf05-rastreabilidade.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 14 – Sequência de consulta de auditoria/rastreabilidade (RNF05).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf05-rastreabilidade.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf05-rastreabilidade.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf05-rastreabilidade.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf05-rastreabilidade.png).
 
 ---
 
@@ -580,7 +580,7 @@ Nenhuma foto capturada offline é perdida; a sincronização completa ocorre aut
 
 ![Sequência de captura offline e sincronização (RNF06)](diagramas/4.3-rnf06-offline-sync.png)
 
-**Figura 15 – Sequência de captura offline e sincronização (RNF06).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-engenharia-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf06-offline-sync.puml](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/4.3-rnf06-offline-sync.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-engenharia-software/blob/main/doc/uml/render.sh)).
+**Figura 15 – Sequência de captura offline e sincronização (RNF06).** Fonte: elaborado pelo autor (gerado a partir da fonte PlantUML — [doc/uml/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/tree/main/doc/uml), fonte editável, ver [4.3-rnf06-offline-sync.puml](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/4.3-rnf06-offline-sync.puml), renderizar com [render.sh](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/uml/render.sh)). Imagem em alta resolução: [4.3-rnf06-offline-sync.png](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/relatorio/diagramas/4.3-rnf06-offline-sync.png).
 
 #### Riscos declarados e tratamento
 
