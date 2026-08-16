@@ -1,0 +1,29 @@
+@startuml
+' Evidência do Cenário RNF05 (seção 4.3 do relatório) — sequência de consulta de auditoria/
+' rastreabilidade: histórico técnico via Temporal (execução do workflow) e via Grafana/Loki
+' (logs correlacionados por sinistro_id). Renderizar com render.sh.
+
+actor Auditor
+participant "Temporal Web UI / SDK" as TemporalUI
+participant "Temporal Server" as Temporal
+participant "Base do Pipeline" as BasePipeline
+participant Grafana
+participant Loki
+
+Auditor -> TemporalUI: consulta histórico do sinistro_id
+TemporalUI -> Temporal: busca execução do workflow (Workflow ID)
+Temporal -> BasePipeline: lê histórico imutável de activities
+BasePipeline --> Temporal: activities executadas\n(step, tentativas, resultado)
+Temporal --> TemporalUI: histórico step a step
+TemporalUI --> Auditor: cadeia técnica (fontes consultadas, timestamps, resultado)
+
+Auditor -> Grafana: consulta logs por sinistro_id
+Grafana -> Loki: query correlacionada (sinistro_id / Workflow ID)
+Loki --> Grafana: logs de todos os containers da pipeline
+Grafana --> Auditor: linha do tempo consolidada
+
+note over Auditor
+  Nível técnico/interno (RF12/RF14) —
+  não exposto ao regulador via Web Console
+end note
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+' Evidência do Cenário RNF06 (seção 4.3 do relatório) — sequência de captura offline e
+' sincronização automática ao reconectar (upload retomável via URL pré-assinada + chave
+' de idempotência gerada no cliente). Renderizar com render.sh.
+
+actor Segurada
+participant "Mobile App" as App
+participant "Fila local\n(persistente)" as Fila
+participant "API Gateway" as Gateway
+participant "API de Sinistros\n(Command Handler)" as SinistroAPI
+participant "Google Cloud Storage" as GCS
+
+== Sem conectividade ==
+Segurada -> App: captura fotos do sinistro
+App -> Fila: grava foto + chave de idempotência (gerada no cliente)
+note right of Fila
+  Persistência em disco,
+  não só em memória
+end note
+
+== Conexão restabelecida ==
+App -> Fila: lê itens pendentes de sincronização
+App -> Gateway: solicita URL pré-assinada (chave de idempotência)
+Gateway -> SinistroAPI: valida chave de idempotência
+SinistroAPI --> Gateway: URL pré-assinada
+Gateway --> App: URL pré-assinada
+App -> GCS: upload retomável/parcelado (direto, via URL pré-assinada)
+App -> Gateway: confirma envio (mesma chave de idempotência)
+Gateway -> SinistroAPI: dispara análise (UPSERT idempotente)
+App -> Fila: remove item sincronizado
+@enduml

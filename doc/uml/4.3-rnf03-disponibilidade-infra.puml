@@ -1,0 +1,49 @@
+@startuml
+' Evidência do Cenário RNF03 (seção 4.3 do relatório) — recorte da topologia de
+' disponibilidade: cluster GKE multi-zona com réplicas + serviços gerenciados do GCP
+' com SLA próprio. Não repete os 23 containers da Figura 2 (visão macro), só a
+' redundância que sustenta a meta de 99,9%/mês. Renderizar com render.sh.
+
+skinparam componentStyle rectangle
+
+cloud "Cluster GKE (multi-zona)" {
+  node "Zona A" as ZoneA {
+    [Réplica de\ncomponente] as ReplicaA
+  }
+  node "Zona B (falha)" as ZoneB #line.dashed {
+    [Réplica de\ncomponente] as ReplicaB
+  }
+  node "Zona C" as ZoneC {
+    [Réplica de\ncomponente] as ReplicaC
+  }
+}
+
+component "Temporal Server" as Temporal
+
+database "Cloud SQL\n(HA gerenciada)" as CloudSQL
+database "Memorystore\n(HA gerenciada)" as Memorystore
+queue "Pub/Sub\n(HA gerenciada)" as PubSub
+
+ReplicaA -[hidden]right- ReplicaB
+ReplicaB -[hidden]right- ReplicaC
+
+Temporal --> ReplicaA
+Temporal --> ReplicaB : retry automático\n(RF12)
+Temporal --> ReplicaC
+Temporal --> CloudSQL : histórico de\nexecução
+
+ReplicaA --> Memorystore
+ReplicaC --> PubSub
+
+note bottom of ZoneB
+  Falha de zona não interrompe
+  solicitação em andamento —
+  Temporal retoma via retry.
+end note
+
+note bottom of CloudSQL
+  SLA de HA do próprio serviço
+  gerenciado — a plataforma não
+  opera HA para estado.
+end note
+@enduml

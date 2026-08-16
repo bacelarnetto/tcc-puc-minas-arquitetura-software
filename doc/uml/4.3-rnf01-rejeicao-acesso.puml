@@ -1,0 +1,25 @@
+@startuml
+' Evidência do Cenário RNF01 (seção 4.3 do relatório) — sequência de rejeição de acesso
+' não autorizado, cobrindo os dois caminhos do Estímulo: token inválido/fora do RBAC no
+' Gateway, e tentativa de bypass direto à Tools API. Renderizar com render.sh.
+
+actor Cliente
+participant "API Gateway" as Gateway
+participant Keycloak
+participant "Tools API" as ToolsAPI
+
+== Caminho 1: token inválido ou fora do RBAC ==
+Cliente -> Gateway: requisição + JWT (expirado ou sem papel necessário)
+Gateway -> Keycloak: valida assinatura do token (JWKS)
+Gateway -> Gateway: aplica RBAC por papel (claim)
+Gateway --> Cliente: 401/403 (rejeitado na borda)
+note right of Gateway
+  Requisição não alcança
+  a lógica de negócio
+end note
+
+== Caminho 2: bypass do Gateway (chamada direta à Tools API) ==
+Cliente -> ToolsAPI: chamada direta (sem passar pelo Gateway)
+ToolsAPI -> ToolsAPI: exige autenticação de serviço própria (client credentials)
+ToolsAPI --> Cliente: 401 (sem credencial de serviço válida)
+@enduml

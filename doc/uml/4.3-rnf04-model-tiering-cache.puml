@@ -1,0 +1,49 @@
+@startuml
+allowmixing
+' Evidência do Cenário RNF04 (seção 4.3 do relatório) — recorte do MCP Host focado
+' nos dois pontos de mecanismo que sustentam custo/latência: model tiering no LLM
+' Provider Adapter e cache de leitura na Tools API. Não repete o Diagrama de
+' Container 3.2.2 completo (Figura 4). A chamada à Tools API passa pelo MCP Client
+' Manager e pelo MCP Server Endpoint (protocolo MCP), consistente com a Figura 7
+' (seção 3.3.2) — corrigido em 2026-08-16 após revisão apontar que a versão
+' anterior desenhava uma seta direta que sugeria bypass do protocolo MCP.
+' Renderizar com render.sh.
+
+package "MCP Host" {
+  class AgentOrchestrator <<Component>>
+  class LLMProviderAdapter <<Component>>
+  class MCPClientManager <<Component>>
+}
+
+package "Tools API" {
+  class "MCP Server Endpoint" as MCPServerEndpoint <<Component>>
+  class ApoliceSinistroQueryService <<Component>>
+  class CacheAdapter <<Component>>
+}
+
+cloud "Provedor de LLM" as LLMProvider
+database "Memorystore\n(cache de leitura)" as Redis
+
+AgentOrchestrator --> LLMProviderAdapter : step mecânico → modelo barato\nstep de consolidação → modelo c/ mais raciocínio
+LLMProviderAdapter --> LLMProvider : chat completion (por step)
+
+AgentOrchestrator --> MCPClientManager
+MCPClientManager ..> MCPServerEndpoint : via protocolo MCP\n(tools/call)
+MCPServerEndpoint --> ApoliceSinistroQueryService
+ApoliceSinistroQueryService --> CacheAdapter : tenta cache antes\nde reconsultar
+CacheAdapter --> Redis
+
+note bottom of LLMProviderAdapter
+  Model tiering configurável via
+  Prompt Config Store (RF05),
+  sem mudança de código.
+end note
+
+note bottom of CacheAdapter
+  Evita reconsultar a fonte (BigQuery) no
+  mesmo fluxo — reduz latência/custo de
+  backend sob concorrência (RNF04); não
+  reduz, por si só, tokens enviados ao LLM
+  (isso é papel do model tiering).
+end note
+@enduml

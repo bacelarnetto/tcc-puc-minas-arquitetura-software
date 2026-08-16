@@ -1,0 +1,39 @@
+@startuml
+' Evidência do Cenário RNF02 (seção 4.3 do relatório) — recorte do MCP Host/Tools API
+' (Figura 7, seção 3.3.2) focado só no ponto de extensão: Tool Registry + MCP Server
+' Endpoint, replicado por um novo domínio hipotético, sem alterar o Agent Orchestrator.
+' Renderizar com render.sh.
+
+interface IMCPTool {
+  +tools_list()
+  +tools_call(name, args)
+}
+
+package "MCP Host (não alterado)" {
+  class AgentOrchestrator <<Component>>
+  class MCPClientManager <<Component>>
+}
+
+package "Tools API — domínio Sinistros (existente)" {
+  class "MCP Server Endpoint" as MCPServerEndpointSinistros <<Component>>
+  class "Tool Registry" as ToolRegistrySinistros <<Component>>
+}
+
+package "Tools API — novo domínio (hipotético)" #line.dashed {
+  class "MCP Server Endpoint" as MCPServerEndpointNovo <<Component>>
+  class "Tool Registry" as ToolRegistryNovo <<Component>>
+}
+
+AgentOrchestrator --> MCPClientManager
+MCPClientManager ..> IMCPTool : consome (tools/list, tools/call)
+MCPServerEndpointSinistros ..|> IMCPTool
+MCPServerEndpointSinistros --> ToolRegistrySinistros
+MCPServerEndpointNovo ..|> IMCPTool
+MCPServerEndpointNovo --> ToolRegistryNovo
+
+note bottom of MCPServerEndpointNovo
+  Único artefato novo: replica o
+  mesmo padrão Registry/Facade.
+  MCP Host não é tocado.
+end note
+@enduml
