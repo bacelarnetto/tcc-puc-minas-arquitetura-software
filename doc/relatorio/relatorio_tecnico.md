@@ -9,8 +9,7 @@
 
 > Estrutura baseada no template oficial (`doc/puc/Template RelatorioTecnico ASD simpl.docx`) e no
 > Regulamento do Projeto Integrado — pós ASD 2025 (`doc/puc/Regulamento do Projeto Integrado - pós ASD 2025.pdf`).
-> Este documento segue as **duas etapas** vigentes (não a versão de 3 etapas dos arquivos do Notion, que
-> parece ser de uma oferta anterior do curso — a confirmar com o professor).
+> Este documento segue as **duas etapas**.
 
 > **Repositório do projeto:** o código-fonte, os modelos C4 (Structurizr) e os diagramas de componentes (PlantUML) usados neste relatório estão versionados em [github.com/bacelarnetto/tcc-puc-minas-arquitetura-software](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software) — incluindo os artefatos editáveis (`doc/c4/`, `doc/uml/`) e o próprio relatório publicado via [docsify](https://docsify.js.org/) (`doc/relatorio/`).
 
