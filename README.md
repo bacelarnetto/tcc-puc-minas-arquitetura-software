@@ -1,4 +1,4 @@
-# tcc-engenharia-software
+# tcc-puc-minas-arquitetura-software
 
 Projeto Integrado — Relatório Técnico de Arquitetura de Software Distribuída.
 
