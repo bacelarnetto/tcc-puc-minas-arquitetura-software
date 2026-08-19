@@ -59,7 +59,6 @@ As restrições arquiteturais definem as limitações técnicas, contratuais, no
 | R5 | Dados pessoais e de sinistro (fotos, laudos, dados da segurada) tratados pela plataforma devem atender a requisitos de proteção de dados (Lei Geral de Proteção de Dados — LGPD) e às normas do órgão regulador do setor (SUSEP). |
 
 ### 2.2 Requisitos Funcionais
-*(12 a 15 requisitos, macro, claros e completos — CA-1.3)*
 
 | ID | Descrição Resumida | Dificuldade (B/M/A) | Prioridade (B/M/A) |
 | --- | --- | --- | --- |
@@ -152,10 +151,9 @@ Os mecanismos arquiteturais representam as decisões de design e escolhas tecnol
 
 ## 3. Modelagem Arquitetural
 
-*(Modelo C4 — https://c4model.com/)*
+Esta seção apresenta a modelagem arquitetural do sistema RelatoSeg, estruturada com base no modelo C4 (Context, Containers, Components, Code). A abordagem visa detalhar progressivamente a solução, partindo de uma visão macro de integração com sistemas externos até a decomposição dos seus componentes internos, evidenciando as interações orquestradas pelo protocolo MCP.
 
 ### 3.1 Diagrama de Contexto
-*(CA-1.6 — não precisa ser UML, deve ser claro e completo)*
 
 ![Diagrama de Contexto do RelatoSeg](diagramas/3.1-contexto.png)
 
@@ -168,7 +166,6 @@ Os mecanismos arquiteturais representam as decisões de design e escolhas tecnol
 A Figura 1 mostra a especificação do diagrama geral (macroarquitetura) da solução proposta, com todos os atores e sistemas externos que interagem com a Plataforma RelatoSeg. A segurada pode enviar fotos e informações do dano diretamente pelo aplicativo mobile ou pelo web portal (aplicações separadas do Web Console interno — ver justificativa na seção 2.4), disparando a análise (entrada *self-service*). Alternativamente, o regulador de sinistros solicita a análise através do sistema de Workflow/BPM já existente na seguradora, que dispara a Plataforma RelatoSeg — comunicação bidirecional, já que a Plataforma também atualiza o Workflow/BPM com o status da análise. Regulador e corretor de seguros usam o Web Console para acompanhar o status das análises; o administrador de plataforma — funcionário técnico/de negócio da seguradora — usa uma aplicação separada, o **Agent Console** (ver justificativa na seção 2.4), para criar/configurar agentes, modelos de LLM e prompts, e cadastrar novos MCP Servers. Em todos os casos, a plataforma orquestra os agentes de IA — invocando o **provedor de LLM** contratado para cada chamada de chat completion —, consulta as fontes de dados da apólice e do sinistro (estruturadas no *data warehouse*, documentais como laudos periciais nos sistemas internos), gera o parecer final e notifica ativamente ao término do processo (sucesso ou erro): por e-mail para regulador e corretor, por push notification para a segurada — além de o resultado ficar sempre disponível sob consulta nos respectivos consoles.
 
 ### 3.2 Diagrama de Container
-*(CA-1.7 — segundo o C4 model)*
 
 O Diagrama de Container descreve a arquitetura de alto nível do RelatoSeg, detalhando a distribuição das aplicações, bases de dados e filas de mensagens. Ele evidencia as fronteiras de execução do sistema e como o protocolo MCP orquestra o fluxo de dados entre os serviços.
 
@@ -231,7 +228,6 @@ A Figura 5 detalha o step 5 e os dois consumidores independentes do resultado. O
 > **Nota sobre tratamento de erro em qualquer step (RF12):** por padrão, se uma *activity* (MCP Host, Report Builder ou Document Generator) esgota sua política de retry e falha definitivamente, o Temporal apenas marca a execução do workflow como "Failed" e para — o **step 5 (Notifier) nunca seria acionado**, e o erro nunca chegaria ao Pub/Sub, à Base de Sinistros ou ao e-mail do regulador, quebrando o RF12. Por isso o **workflow captura a falha de qualquer step e aciona o Notifier mesmo assim** (padrão try/catch dentro da lógica do workflow, funcionando como um "finally" que sempre notifica, com sucesso ou erro) — o Notifier passa a rodar tanto no caminho feliz quanto no caminho de erro, só variando o status publicado. Essa orquestração é código próprio do autor (a definição do workflow do Temporal, executada por um worker), mas não aparece como componente isolado no Diagrama de Componentes (seção 3.3) — por legibilidade, foi tratada como parte do container **Temporal Server**, apesar de este estar classificado ali como adquirido/gerido, sem lógica de negócio própria. O histórico técnico da falha (qual step, quantas tentativas, motivo) fica automaticamente no histórico de execução do Temporal Server (Base do Pipeline, seção 2.4) — auditável via Temporal Web UI/SDK para fins operacionais, mas não exposto ao regulador via Web Console (RNF05 é atendido no nível técnico/interno; o nível de negócio permanece o status binário descrito na nota da seção 3.2.2). Dados brutos já coletados antes da falha (fotos, documentos) permanecem no Object Storage — chave determinística (seção 2.4) —, preservando evidência parcial mesmo em pareceres que não concluíram.
 
 ### 3.3 Diagrama de Componentes
-*(CA-1.8 — preferencialmente UML)*
 
 O Diagrama de Componentes decompõe os containers do sistema em suas unidades funcionais e módulos de código. A estrutura a seguir detalha as responsabilidades internas da API de Sinistros, do MCP Host e das ferramentas de suporte, destacando a aplicação de padrões de projeto e arquitetura hexagonal.
 
@@ -319,7 +315,6 @@ A Figura 9 apresenta os componentes do step 5.
 A avaliação segue o método **ATAM** (*Architecture Tradeoff Analysis Method*), conforme descrito por Bass, Clements e Kazman (2021).
 
 ### 4.1 Análise das Abordagens Arquiteturais
-*(CA-2.1 — deve contemplar todos os RNF)*
 
 | Atributo de Qualidade | Cenário | Importância | Complexidade |
 | --- | --- | --- | --- |
@@ -330,10 +325,9 @@ A avaliação segue o método **ATAM** (*Architecture Tradeoff Analysis Method*)
 | Rastreabilidade | RNF05 — auditabilidade ponta a ponta via histórico durável do Temporal e logging centralizado | Média | Baixa |
 | Usabilidade/Offline | RNF06 — captura offline e sincronização automática de evidências no app mobile | Média | Alta |
 
-Cada atributo de qualidade acima é endereçado por uma abordagem arquitetural específica, detalhada nos mecanismos (seção 2.4) e avaliada em profundidade nos cenários a seguir (4.2/4.3). **Segurança/Privacidade (RNF01)** é resolvida na borda: OAuth2/OIDC via Keycloak com dois *realms*, RBAC aplicado uma única vez no API Gateway, e autenticação de serviço própria na Tools API para o caminho M2M que não passa pelo Gateway. **Extensibilidade (RNF02)** decorre da genericidade do protocolo MCP: o MCP Host não conhece o domínio de negócio, então um novo MCP Server se conecta via `tools/list`/`tools/call` sem alteração de código, com a configuração de agente feita em runtime pelo Agent Console. **Disponibilidade (RNF03)** é sustentada pela topologia GKE multi-zona combinada a serviços gerenciados do GCP (Cloud SQL, Memorystore, Pub/Sub), cada um com SLA próprio, tirando da plataforma a responsabilidade de operar alta disponibilidade para componentes com estado. **Desempenho/Eficiência de custo (RNF04)** é abordado pelo `LLM Provider Adapter` (*model tiering* por *step* do pipeline) combinado a cache de leitura no Memorystore, reduzindo tokens reenviados ao provedor de LLM. **Rastreabilidade (RNF05)** apoia-se no histórico de execução imutável do Temporal (por *activity*) somado a *logging* estruturado correlacionado por `sinistro_id` (SLF4J/Logback → Promtail → Loki → Grafana). **Usabilidade/Offline (RNF06)** é resolvida no Mobile App via fila local persistente, *upload* retomável com URL pré-assinada e chave de idempotência gerada no cliente, evitando tanto perda de dados quanto duplicidade ao reconectar.
+Cada atributo de qualidade acima é endereçado por uma abordagem arquitetural específica, detalhada nos mecanismos (seção 2.4) e avaliada em profundidade nos cenários a seguir (4.2/4.3). **Segurança/Privacidade (RNF01)** é resolvida na borda: OAuth2/OIDC via Keycloak com dois *realms*, RBAC aplicado uma única vez no API Gateway, e autenticação de serviço própria na Tools API para o caminho M2M que não passa pelo Gateway. **Extensibilidade (RNF02)** decorre da genericidade do protocolo MCP: o MCP Host não conhece o domínio de negócio, então um novo MCP Server se conecta via `tools/list`/`tools/call` sem alteração de código, com a configuração de agente feita em runtime pelo Agent Console. **Disponibilidade (RNF03)** é sustentada pela topologia GKE multi-zona combinada a serviços gerenciados do GCP (Cloud SQL, Memorystore, Pub/Sub), cada um com SLA próprio, tirando da plataforma a responsabilidade de operar alta disponibilidade para componentes com estado. **Desempenho/Eficiência de custo (RNF04)** é abordado pelo `LLM Provider Adapter` (*model tiering* por *step* do pipeline, reduzindo tokens reenviados ao provedor de LLM) combinado a cache de leitura no Memorystore na Tools API, que reduz latência/carga de acesso à fonte (BigQuery), não os tokens enviados ao LLM. **Rastreabilidade (RNF05)** apoia-se no histórico de execução imutável do Temporal (por *activity*) somado a *logging* estruturado correlacionado por `sinistro_id` (SLF4J/Logback → Promtail → Loki → Grafana). **Usabilidade/Offline (RNF06)** é resolvida no Mobile App via fila local persistente, *upload* retomável com URL pré-assinada e chave de idempotência gerada no cliente, evitando tanto perda de dados quanto duplicidade ao reconectar.
 
 ### 4.2 Cenários
-*(CA-2.2 — um cenário para cada RNF da seção 2.3)*
 
 - **Cenário RNF01 (Segurança/Privacidade)** — autenticação/autorização na borda (Keycloak + RBAC no API Gateway) e autenticação service-to-service para as integrações M2M, ver Tabela abaixo e evidências na seção 4.3
 - **Cenário RNF02 (Extensibilidade)** — extensão para um novo domínio de negócio via novo MCP Server, sem alterar o MCP Host, dentro do prazo de 10 dias-homem, ver Tabela abaixo e evidências na seção 4.3
@@ -345,7 +339,6 @@ Cada atributo de qualidade acima é endereçado por uma abordagem arquitetural e
 O critério CA-2.2 exige um cenário para cada RNF da seção 2.3 — os 6 RNF estão cobertos 1:1 pelos 6 cenários acima. Os riscos que **excedem o escopo de cada RNF individual** (não são o cenário principal do atributo, mas surgem da análise dele) não geram cenário ATAM próprio; são tratados na tabela "Riscos declarados e tratamento" ao final da seção 4.3.
 
 ### 4.3 Evidências da Avaliação
-*(CA-2.3 — pelo menos 2 evidências por avaliação: 1 textual + 1 figura)*
 
 Cada cenário segue a estrutura clássica do ATAM (BASS; CLEMENTS; KAZMAN, 2021): Atributo de Qualidade/Requisito, o cenário propriamente dito (síntese estímulo → ambiente → resposta), a decomposição do cenário (Preocupação/Ambiente/Estímulo/Mecanismo/Medida de resposta) e, por fim, as considerações sobre a arquitetura — **Pontos de Sensibilidade** (o que a resposta depende criticamente), **Tradeoff** (quando a mesma decisão favorece um atributo de qualidade às custas de outro) e **Riscos** (decisões ainda em aberto ou não cobertas).
 
@@ -599,7 +592,6 @@ Cada cenário acima declarou, no campo Riscos de suas Considerações sobre a ar
 ---
 
 ## 5. Avaliação Crítica dos Resultados
-*(CA-2.4 — prós e contras da arquitetura)*
 
 *Quadro resumo — pontos avaliados*
 
@@ -611,13 +603,13 @@ Cada cenário acima declarou, no campo Riscos de suas Considerações sobre a ar
 | Custo × latência × qualidade de IA | Trade-off estrutural (Cenário RNF04); mitigado por *model tiering*, não eliminado |
 | *Database per Service* por domínio | Correção de escopo do Prompt Config Store reforçou *bounded context* sobre conveniência técnica |
 
-A arquitetura proposta atende aos objetivos definidos na seção 1. A decomposição em containers e componentes desacoplados via arquitetura hexagonal (seção 3.3) valida, ao menos no nível de modelagem, a proposta de reutilização entre domínios de negócio (RF15): um novo domínio exigiria apenas um novo MCP Server, sem alteração do MCP Host, dentro do prazo de 10 dias-homem estabelecido pelo RNF02. A consistência na aplicação de padrões — CQRS na API de Sinistros, Publish-Subscribe na notificação, Strategy nos canais de notificação, Adapter nas integrações externas — e o tratamento sistemático de idempotência em cada ponto de reentrega (seção 3.3, nota sobre idempotência) são pontos fortes: nenhum mecanismo de retry foi deixado sem um correspondente de deduplicação, reduzindo o risco de efeito colateral duplicado — um requisito implícito, mas crítico, em um domínio regulado como seguros.
+A arquitetura proposta atende aos objetivos definidos na seção 1. A decomposição em containers (seção 3.2) combinada à organização interna de cada um segundo a Arquitetura Hexagonal (seção 3.3) valida, ao menos no nível de modelagem, a proposta de reutilização entre domínios de negócio (RF15): um novo domínio exigiria apenas um novo MCP Server, sem alteração do MCP Host, dentro do prazo de 10 dias-homem estabelecido pelo RNF02. A consistência na aplicação de padrões — CQRS na API de Sinistros, Publish-Subscribe na notificação, Strategy nos canais de notificação, Adapter nas integrações externas — e o tratamento sistemático de idempotência em cada ponto de reentrega (seção 3.3, nota sobre idempotência) são pontos fortes: nenhum mecanismo de retry foi deixado sem um correspondente de deduplicação, reduzindo o risco de efeito colateral duplicado — um requisito implícito, mas crítico, em um domínio regulado como seguros.
 
 Por outro lado, alguns trade-offs foram conscientemente aceitos e merecem registro crítico. Primeiro, a decisão de deploy (Kubernetes/GKE em produção, GitHub Actions para CI/CD) foi definida apenas em nível de mecanismo arquitetural (seção 2.4), sem aprofundar o pipeline de build/deploy, estratégia de versionamento de imagem/API ou GitOps — por estar fora do escopo deste trabalho, que é modelagem arquitetural, não implementação/construção (Regulamento do Projeto Integrado, seção 2).
 
 Segundo, optou-se por não introduzir um BFF (*Backend for Frontend*): decisão razoável para o escopo atual, já que os canais de acesso têm necessidades de dados, na maior parte, semelhantes e operações simples de disparo/consulta de status. No entanto, o Mobile App é o canal com requisito genuinamente diferente dos demais (RNF06 — offline-first, banda limitada); se no futuro ele exigir payloads mais enxutos ou agregados, a API de Sinistros compartilhada tende a acumular lógica condicional por cliente — sintoma clássico que levaria à introdução de um BFF dedicado ao mobile, não a todos os canais. Se essa evolução for adotada, o cuidado de design é não duplicar responsabilidade já resolvida em outra camada: o BFF deve se restringir a moldar *payload*, nunca reimplementar autenticação/*rate limiting* (já no API Gateway) nem recalcular status/dados que já são responsabilidade do Query Handler (CQRS) — senão cria-se uma segunda fonte de verdade.
 
-Terceiro, o trade-off entre custo, latência e qualidade do raciocínio de IA, detalhado no Cenário RNF04 (seção 4.3), expõe uma limitação estrutural da arquitetura: o custo operacional escala com o volume de sinistros processados, e não há garantia fechada de que a redução de tokens não afete a qualidade do parecer. O `LLM Provider Adapter` mitiga o problema (*model tiering*, cache de leitura), mas não o elimina — assim como a variabilidade de latência de um provedor de LLM terceiro permanece fora do controle direto da plataforma, a mesma fronteira já assumida para a disponibilidade de terceiros no RNF03.
+Terceiro, o trade-off entre custo, latência e qualidade do raciocínio de IA, detalhado no Cenário RNF04 (seção 4.3), expõe uma limitação estrutural da arquitetura: o custo operacional escala com o volume de sinistros processados, e não há garantia fechada de que a redução de tokens não afete a qualidade do parecer. O `LLM Provider Adapter` mitiga o problema via *model tiering* (menos tokens por *step*), complementado pelo cache de leitura na Tools API (menos latência/carga na fonte de dados), mas não o elimina — assim como a variabilidade de latência de um provedor de LLM terceiro permanece fora do controle direto da plataforma, a mesma fronteira já assumida para a disponibilidade de terceiros no RNF03.
 
 Por fim, a própria elaboração deste trabalho evidenciou o valor de aplicar o princípio *Database per Service* por domínio de negócio (*bounded context*), não apenas por conveniência técnica: a primeira versão da modelagem colocava Temporal Server, Init Worker e MCP Host compartilhando uma única instância de Cloud SQL. A revisão identificou que o MCP Host pertence a um domínio diferente — configuração de agentes/LLM, com dado sensível (chaves de API) — dos demais, que compartilham o domínio de execução de workflow. A correção, isolando o Prompt Config Store em instância própria (seção 2.4), reforça que fronteiras de *bounded context* devem prevalecer sobre a simples viabilidade técnica de compartilhar um recurso.
 
@@ -626,9 +618,8 @@ Os riscos identificados ao longo da avaliação ATAM (seção 4.3) que extrapola
 ---
 
 ## 6. Conclusão
-*(CA-2.5 — lições aprendidas, trade-offs, possibilidades de melhoria)*
 
-O RelatoSeg demonstra que é possível propor uma arquitetura de referência distribuída, orquestrada por agentes de IA via protocolo MCP, capaz de automatizar a geração de relatórios analíticos a partir de dados corporativos heterogêneos e reutilizável entre diferentes áreas de negócio de uma seguradora — objetivo geral estabelecido na seção 1. A macroarquitetura foi modelada segundo o C4 model (contexto, container e componentes, seção 3), os mecanismos de integração entre orquestração de pipeline (Temporal), plataforma de agentes (MCP Host) e API de ferramentas de domínio (Tools API) foram especificados via arquitetura hexagonal e protocolo MCP (seções 2.4 e 3.3), e a arquitetura foi avaliada quanto a segurança, escalabilidade, desempenho, rastreabilidade e extensibilidade segundo o método ATAM (seção 4).
+O RelatoSeg demonstra que é possível propor uma arquitetura de referência distribuída, orquestrada por agentes de IA via protocolo MCP, capaz de automatizar a geração de relatórios analíticos a partir de dados corporativos heterogêneos e reutilizável entre diferentes áreas de negócio de uma seguradora — objetivo geral estabelecido na seção 1. A macroarquitetura foi modelada segundo o C4 model (contexto, container e componentes, seção 3); os mecanismos de integração entre orquestração de pipeline (Temporal), plataforma de agentes (MCP Host) e API de ferramentas de domínio (Tools API) foram especificados via protocolo MCP, com cada container organizado internamente segundo a Arquitetura Hexagonal (seções 2.4 e 3.3); e a arquitetura foi avaliada quanto a segurança, disponibilidade, desempenho e escalabilidade, rastreabilidade, extensibilidade e usabilidade/disponibilidade offline segundo o método ATAM (seção 4).
 
 **Lições aprendidas:**
 
@@ -641,8 +632,6 @@ Como possibilidades de continuidade futura, além das já registradas na Avalia�
 ---
 
 ## Referências
-*(CA-2.6, peso 5 — o template descreve como "recomendado", mas a rubrica exige explicitamente pelo menos 5 boas referências, avaliadas por qualidade/atualização/adequação; tratar como item obrigatório, não opcional. Normas ABNT.)*
-
 - SUSEP. Circular SUSEP nº 621, de 12 de fevereiro de 2021. Dispõe sobre as regras de funcionamento e os critérios para operação das coberturas dos seguros de danos. Brasília: Diário Oficial da União, 17 fev. 2021. Disponível em: https://www.in.gov.br/en/web/dou/-/circular-susep-n-621-de-12-de-fevereiro-de-2021-303756056. Acesso em: 06 ago. 2026.
 - CONJUR. A duração razoável da regulação do sinistro pela seguradora. *Consultor Jurídico*, 28 mar. 2024. Disponível em: https://www.conjur.com.br/2024-mar-28/a-duracao-razoavel-da-regulacao-do-sinistro-pela-seguradora/. Acesso em: 06 ago. 2026.
 - MOBILE TIME. IA é usada por 80% das seguradoras no Brasil, diz CNSeg. *Mobile Time*, 24 fev. 2026. Disponível em: https://www.mobiletime.com.br/noticias/24/02/2026/ia-seguradoras-80-brasil/. Acesso em: 06 ago. 2026.
@@ -652,3 +641,9 @@ Como possibilidades de continuidade futura, além das já registradas na Avalia�
 - HARDT, Dick (ed.). *The OAuth 2.0 Authorization Framework (RFC 6749)*. Internet Engineering Task Force (IETF), out. 2012. Disponível em: https://www.rfc-editor.org/info/rfc6749. Acesso em: 06 ago. 2026.
 - TEMPORAL TECHNOLOGIES. *Temporal documentation: durable execution*. [s.d.]. Disponível em: https://docs.temporal.io/. Acesso em: 06 ago. 2026.
 - COCKBURN, Alistair. *Hexagonal architecture*. 2005. Disponível em: https://alistair.cockburn.us/hexagonal-architecture/. Acesso em: 10 ago. 2026.
+
+---
+
+## Vídeo de Apresentação Final
+- **Vídeo:** [apresentacao_jose_ribamar.mp4](https://drive.google.com/file/d/1wueXiD9v3bTnmqFdqe07vnkSS-Lw0Ubt/view) (Google Drive, acesso público) — também versionado em [doc/apresentacao/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/apresentacao/apresentacao_jose_ribamar.mp4).
+- **Slides de apoio:** [apresentacao_tcc_relatoseg](https://docs.google.com/presentation/d/1ZDmiCYIqu-REYTAPGVz5oGSv_q14boo6BFqBhST_djU/edit?usp=sharing) — também versionado em [doc/apresentacao/](https://github.com/bacelarnetto/tcc-puc-minas-arquitetura-software/blob/main/doc/apresentacao/apresentacao_tcc_relatoseg.pptx).
