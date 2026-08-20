@@ -19,6 +19,17 @@ doc/
 └── uml/         Diagramas de componentes (PlantUML) + render.sh
 ```
 
+## Pré-requisitos
+
+Para gerar/visualizar a documentação (diagramas C4, diagramas de componentes e o relatório via docsify):
+
+| Ferramenta | Uso |
+| --- | --- |
+| [Docker](https://www.docker.com/) (com Docker Compose) | Renderizar diagramas C4 (Structurizr) e diagramas de componentes (PlantUML) |
+| [Node.js](https://nodejs.org/) (traz o `npx`) | Servir o relatório técnico via docsify |
+
+Não é necessária nenhuma instalação adicional — as imagens Docker (`structurizr/structurizr`, `plantuml/plantuml`) e o pacote `docsify-cli` são baixados automaticamente na primeira execução.
+
 ## Diagramas C4 (Structurizr)
 
 Os diagramas de contexto, container e componentes são modelados em DSL no `doc/c4/`.
